@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import {apiUrl} from "../config";
 
 export default function SignUp() {
     const [username, setUsername] = useState("");
@@ -7,7 +8,7 @@ export default function SignUp() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const response = await fetch("http://localhost:8000/api/auth/", {
+        const response = await fetch(`${apiUrl}/api/auth/`, {
             method: "POST", crossDomain: true, headers: {
                 "content-Type": "application/json", "accept": "application/json", "access-Control-Allow-Origin": "*",
             }, body: JSON.stringify({

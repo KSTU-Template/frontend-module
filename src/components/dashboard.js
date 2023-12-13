@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from "react";
 
 import UserInfo from "./userInfo";
+import {apiUrl} from "../config";
 
 export default function Dashboard() {
     const [userData, setUserData] = useState("");
 
     useEffect(async () => {
-        const response = await fetch("http://localhost:8000/api/auth/", {
+        const response = await fetch(`${apiUrl}/api/auth/`, {
             method: "GET", crossDomain: true, headers: {
                 "content-Type": "application/json",
                 "accept": "application/json",

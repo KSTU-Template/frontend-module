@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import {apiUrl} from '../config'
 
 export default function Login() {
     const [username, setUsername] = useState("");
@@ -7,7 +8,7 @@ export default function Login() {
     async function handleSubmit(e) {
         e.preventDefault();
 
-        const response = await fetch("http://localhost:8000/api/auth/login", {
+        const response = await fetch(`${apiUrl}/api/auth/login`, {
             method: "POST", crossDomain: true, headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Accept": "application/json",
