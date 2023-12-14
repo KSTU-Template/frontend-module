@@ -1,7 +1,7 @@
 import React from "react";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom";
 
 import Login from "./components/login_component";
 import SignUp from "./components/signup_component";
@@ -16,11 +16,11 @@ function App() {
                     <Route
                         exact
                         path="/"
-                        element={isLoggedIn === "true" ? <Dashboard/> : <Login/>}
+                        element={isLoggedIn === "true" ? <Navigate to="/dashboard"/> : <Login/>}
                     />
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/register" element={<SignUp/>}/>
-                    <Route path="/dashboard" element={<Dashboard/>}/>
+                    <Route path="/dashboard/*" element={<Dashboard/>}/>
                 </Routes>
             </div>
         </Router>

@@ -1,6 +1,7 @@
 // UserForm.js
 import React, {useState} from "react";
 import {apiUrl} from "../config";
+import '../styles/createClientForm.css'
 
 const CreateClientForm = () => {
     const [formData, setFormData] = useState({
@@ -43,29 +44,29 @@ const CreateClientForm = () => {
         <div>
             <h2>Создать клиента</h2>
             <form onSubmit={handleSubmit}>
-                <div>
+                <div className="mb-3">
                     <label>Пол:</label>
                     <input
                         type="text"
-                        name="gender"
+                        className="form-control"
                         value={formData.gender}
                         onChange={handleChange}
                     />
                 </div>
-                <div>
+                <div className="mb-3">
                     <label>Возраст:</label>
                     <input
                         type="text"
-                        name="age"
+                        className="form-control"
                         value={formData.age}
                         onChange={handleChange}
                     />
                 </div>
-                <div>
+                <div className="mb-3">
                     <label>Регион:</label>
                     <input
                         type="text"
-                        name="region"
+                        className="form-control"
                         value={formData.region}
                         onChange={handleChange}
                     />

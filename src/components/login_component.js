@@ -16,7 +16,7 @@ export default function Login() {
             }, body: new URLSearchParams({
                 'username': username, 'password': password, 'grant_type': 'password'
             })
-        })
+        });
 
         if (!response.ok) {
             alert('Что-то пошло не так')
