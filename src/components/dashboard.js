@@ -5,6 +5,7 @@ import Sidebar from './sidebar';
 import CreateClientForm from "./createClientForm";
 import {apiUrl} from "../config";
 import '../styles/dashboard.css'
+import UserChat from "./userChat";
 
 export default function Dashboard() {
     const [userData, setUserData] = useState("");
@@ -13,7 +14,7 @@ export default function Dashboard() {
         window.location.href = "./login";
     };
 
-    useEffect(async () => {
+    async function getInfoAboutMe() {
         const response = await fetch(`${apiUrl}/api/auth/`, {
             method: "GET", crossDomain: true, headers: {
                 "content-Type": "application/json",
@@ -26,12 +27,16 @@ export default function Dashboard() {
         if (!response.ok) {
             alert("Токен истек войдите заново");
             window.localStorage.clear();
-            window.location.href = "./login";
+            window.location.href = "/login";
             return
         }
 
         const data = await response.json()
         setUserData(data);
+    }
+
+    useEffect(() => {
+        getInfoAboutMe()
     }, []);
 
     return (<div>
@@ -41,6 +46,7 @@ export default function Dashboard() {
                 <Routes>
                     <Route path="/client" element={<CreateClientForm/>}/>
                     <Route path="/" element={<UserInfo userData={userData}/>}/>
+                    <Route path="/chat" element={<UserChat/>}/>
                     {/* Добавьте другие маршруты по мере необходимости */}
                 </Routes>
             </div>

@@ -1,5 +1,5 @@
 // UserForm.js
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {apiUrl} from "../config";
 import '../styles/createClientForm.css'
 
@@ -9,6 +9,7 @@ const CreateClientForm = () => {
         age: "",
         region: "",
     });
+    const [clients, setClients] = useState([])
 
     const handleChange = (e) => {
         setFormData({
@@ -36,9 +37,36 @@ const CreateClientForm = () => {
             return;
         }
 
-        // Дополнительная логика, если необходимо обработать успешный ответ
-        alert("Данные успешно отправлены!");
+        fetchClients();
+
+        setFormData({
+            gender: "",
+            age: "",
+            region: "",
+        });
     };
+
+    const fetchClients = async () => {
+        const response = await fetch(`${apiUrl}/api/client/`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+            },
+        });
+
+        if (!response.ok) {
+            alert("Что-то пошло не так при загрузке клиентов");
+            return;
+        }
+
+        const data = await response.json();
+        setClients(data);
+    };
+
+    useEffect(() => {
+        fetchClients();
+    }, []);
+
 
     return (
         <div>
@@ -49,16 +77,16 @@ const CreateClientForm = () => {
                     <input
                         type="text"
                         className="form-control"
-                        value={formData.gender}
+                        name="gender"
                         onChange={handleChange}
                     />
                 </div>
                 <div className="mb-3">
                     <label>Возраст:</label>
                     <input
-                        type="text"
+                        type="number"
                         className="form-control"
-                        value={formData.age}
+                        name="age"
                         onChange={handleChange}
                     />
                 </div>
@@ -67,13 +95,31 @@ const CreateClientForm = () => {
                     <input
                         type="text"
                         className="form-control"
-                        value={formData.region}
+                        name="region"
                         onChange={handleChange}
                     />
                 </div>
-                {/* Добавьте другие поля по необходимости */}
                 <button type="submit" className="btn btn-primary">Отправить</button>
             </form>
+            <h2>Созданные клиенты</h2>
+            <table className="table">
+                <thead>
+                <tr>
+                    <th>Пол</th>
+                    <th>Возраст</th>
+                    <th>Регион</th>
+                </tr>
+                </thead>
+                <tbody>
+                {clients.map((client) => (
+                    <tr key={client.id}>
+                        <td>{client.data.gender}</td>
+                        <td>{client.data.age}</td>
+                        <td>{client.data.region}</td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
         </div>
     );
 };
