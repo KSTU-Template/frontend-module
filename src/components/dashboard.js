@@ -1,10 +1,15 @@
 import React, {useEffect, useState} from "react";
 
 import UserInfo from "./userInfo";
+import CreateClientForm from "./createClientForm";
 import {apiUrl} from "../config";
 
 export default function Dashboard() {
     const [userData, setUserData] = useState("");
+    const logOut = () => {
+        window.localStorage.clear();
+        window.location.href = "./login";
+    };
 
     useEffect(async () => {
         const response = await fetch(`${apiUrl}/api/auth/`, {
@@ -27,5 +32,15 @@ export default function Dashboard() {
         setUserData(data);
     }, []);
 
-    return <UserInfo userData={userData}/>;
+    return <div>
+        <div className="auth-wrapper">
+            <div className="auth-inner">
+                <UserInfo userData={userData}/>
+                <CreateClientForm/>
+                <button onClick={logOut} className="btn btn-primary">
+                    Выйти
+                </button>
+            </div>
+        </div>
+    </div>;
 }
