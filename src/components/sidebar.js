@@ -8,9 +8,8 @@ const Sidebar = () => {
         <div className="sidebar m-3">
             <div className="sidebar-links">
                 <Link to="/dashboard/">Обо мне</Link>
-                <Link to="/dashboard/client">Клиенты</Link>
-                <Link to="/dashboard/chat">Генерация предложения</Link>
-                {/* Добавьте другие ссылки по мере необходимости */}
+                <Link to="/dashboard/client">Мои клиенты</Link>
+                <Link to="/dashboard/chat">Генерация предложений</Link>
             </div>
         </div>
     );
@@ -25,8 +24,13 @@ const sidebarNavItems = [
         section: ''
     },
     {
-        display: 'Создать клиента',
+        display: 'Мои клиенты',
         to: '/dashboard/client',
         section: ''
     },
-]
+    {
+        display: 'Генерация предложений',
+        to: '/dashboard/chat',
+        section: ''
+    },
+];

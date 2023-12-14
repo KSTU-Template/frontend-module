@@ -9,7 +9,8 @@ const CreateClientForm = () => {
         age: "",
         region: "",
     });
-    const [clients, setClients] = useState([])
+    const [clients, setClients] = useState([]);
+    const [showForm, setShowForm] = useState(false);
 
     const handleChange = (e) => {
         setFormData({
@@ -63,51 +64,82 @@ const CreateClientForm = () => {
         setClients(data);
     };
 
+    const handleDelete = async (clientId) => {
+        const response = await fetch(`${apiUrl}/api/client/${clientId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+            },
+        });
+
+        if (!response.ok) {
+            alert("Что-то пошло не так при удалении клиента");
+            return;
+        }
+
+        fetchClients();
+    };
+
     useEffect(() => {
         fetchClients();
     }, []);
 
+    const toggleForm = () => {
+        setShowForm(!showForm);
+    };
 
     return (
         <div>
-            <h2>Создать клиента</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                    <label>Пол:</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        name="gender"
-                        onChange={handleChange}
-                    />
+            <button onClick={toggleForm} className="btn btn-primary mb-3">
+                {showForm ? "Закрыть" : "Добавить клиента"}
+            </button>
+
+            {showForm && (
+                <div>
+                    <h3>Добавь нового клиента</h3>
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-2">
+                            <label>Пол:</label>
+                            <input
+                                type="text"
+                                className="form-control form-control-sm"
+                                name="gender"
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="mb-2">
+                            <label>Возраст:</label>
+                            <input
+                                type="number"
+                                className="form-control form-control-sm"
+                                name="age"
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="mb-2">
+                            <label>Регион:</label>
+                            <input
+                                type="text"
+                                className="form-control form-control-sm"
+                                name="region"
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <button type="submit" className="btn btn-primary">
+                            Добавить
+                        </button>
+                    </form>
                 </div>
-                <div className="mb-3">
-                    <label>Возраст:</label>
-                    <input
-                        type="number"
-                        className="form-control"
-                        name="age"
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="mb-3">
-                    <label>Регион:</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        name="region"
-                        onChange={handleChange}
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary">Отправить</button>
-            </form>
-            <h2>Созданные клиенты</h2>
+            )}
+
+            <h3>Добавленные клиенты</h3>
             <table className="table">
                 <thead>
                 <tr>
                     <th>Пол</th>
                     <th>Возраст</th>
                     <th>Регион</th>
+                    <th>Действия</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -116,6 +148,13 @@ const CreateClientForm = () => {
                         <td>{client.data.gender}</td>
                         <td>{client.data.age}</td>
                         <td>{client.data.region}</td>
+                        <td>
+                            <button className="btn btn-danger"
+                                onClick={() => handleDelete(client.id)}
+                            >
+                                Удалить
+                            </button>
+                        </td>
                     </tr>
                 ))}
                 </tbody>
