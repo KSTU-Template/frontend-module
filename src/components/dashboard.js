@@ -1,18 +1,18 @@
 import React, {useEffect, useState} from "react";
 import {Route, Routes} from "react-router-dom";
-import UserInfo from "./userInfo";
-import Sidebar from './sidebar';
-import CreateClientForm from "./createClientForm";
+
 import {apiUrl} from "../config";
-import '../styles/dashboard.css'
+
+import UserInfo from "./userInfo";
+import Sidebar from "./sidebar";
+import ClientForm from "./client/clientForm";
 import UserChat from "./userChat";
+
+import '../styles/dashboard.css'
 
 export default function Dashboard() {
     const [userData, setUserData] = useState("");
-    const logOut = () => {
-        window.localStorage.clear();
-        window.location.href = "./login";
-    };
+    const [clients, setClients] = useState([]);
 
     async function getInfoAboutMe() {
         const response = await fetch(`${apiUrl}/api/auth/`, {
@@ -31,12 +31,27 @@ export default function Dashboard() {
             return
         }
 
-        const data = await response.json()
+        const data = await response.json();
         setUserData(data);
     }
 
+    async function fetchClients() {
+        const response = await fetch(`${apiUrl}/api/client/`, {
+            method: "GET", headers: {Authorization: `Bearer ${window.localStorage.getItem("token")}`,},
+        });
+
+        if (!response.ok) {
+            alert("Что-то пошло не так при загрузке клиентов");
+            return;
+        }
+
+        const data = await response.json();
+        setClients(data);
+    }
+
     useEffect(() => {
-        getInfoAboutMe()
+        getInfoAboutMe();
+        fetchClients();
     }, []);
 
     return (<div>
@@ -44,10 +59,9 @@ export default function Dashboard() {
             <div className="dashboard-inner">
                 <Sidebar/>
                 <Routes>
-                    <Route path="/client" element={<CreateClientForm/>}/>
+                    <Route path="/client" element={<ClientForm clients={clients} fetchClients={fetchClients}/>}/>
                     <Route path="/" element={<UserInfo userData={userData}/>}/>
                     <Route path="/chat" element={<UserChat/>}/>
-                    {/* Добавьте другие маршруты по мере необходимости */}
                 </Routes>
             </div>
         </div>
