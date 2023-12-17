@@ -6,13 +6,16 @@ import {apiUrl} from "../config";
 import UserInfo from "./userInfo";
 import Sidebar from "./sidebar";
 import ClientForm from "./client/clientForm";
-import UserChat from "./userChat";
+import ChatForm from "./chat/chatForm";
 
 import '../styles/dashboard.css'
+import ChatHistory from "./chat/chatHistory";
 
 export default function Dashboard() {
     const [userData, setUserData] = useState("");
     const [clients, setClients] = useState([]);
+    const [chats, setChats] = useState([]);
+    const [infChannels, setInfChannels] = useState([]);
 
     async function getInfoAboutMe() {
         const response = await fetch(`${apiUrl}/api/auth/`, {
@@ -49,9 +52,39 @@ export default function Dashboard() {
         setClients(data);
     }
 
+    async function fetchChats() {
+        const response = await fetch(`${apiUrl}/api/chat/`, {
+            method: "GET", headers: {Authorization: `Bearer ${window.localStorage.getItem("token")}`,},
+        });
+
+        if (!response.ok) {
+            alert("Что-то пошло не так при загрузке чатов");
+            return;
+        }
+
+        const data = await response.json();
+        setChats(data);
+    }
+
+    async function fetchInformationChannels() {
+        const response = await fetch(`${apiUrl}/api/information_channel/`, {
+            method: "GET", headers: {Authorization: `Bearer ${window.localStorage.getItem("token")}`,},
+        });
+
+        if (!response.ok) {
+            alert("Что-то пошло не так при загрузке чатов");
+            return;
+        }
+
+        const data = await response.json();
+        setInfChannels(data);
+    }
+
     useEffect(() => {
         getInfoAboutMe();
         fetchClients();
+        fetchChats();
+        fetchInformationChannels();
     }, []);
 
     return (<div>
@@ -61,7 +94,8 @@ export default function Dashboard() {
                 <Routes>
                     <Route path="/client" element={<ClientForm clients={clients} fetchClients={fetchClients}/>}/>
                     <Route path="/" element={<UserInfo userData={userData}/>}/>
-                    <Route path="/chat" element={<UserChat/>}/>
+                    <Route path="/chat" element={<ChatForm infChannels={infChannels}/>}/>
+                    <Route path="/chat/history" element={<ChatHistory infChannels={infChannels} chats={chats}/>}/>
                 </Routes>
             </div>
         </div>

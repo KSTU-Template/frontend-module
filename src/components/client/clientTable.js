@@ -25,18 +25,20 @@ const ClientTable = ({clients, fetchClients}) => {
         <table className="table">
             <thead>
             <tr>
+                <th>ID</th>
+                <th>Ник</th>
                 <th>Пол</th>
                 <th>Возраст</th>
-                <th>Регион</th>
                 <th>Действия</th>
             </tr>
             </thead>
             <tbody>
             {clients.map((client) => (
                 <tr key={client.id}>
-                    <td>{client.data.gender}</td>
-                    <td>{client.data.age}</td>
-                    <td>{client.data.region}</td>
+                    <td>{client.id}</td>
+                    <td>{client.username}</td>
+                    <td>{client.gender}</td>
+                    <td>{client.age}</td>
                     <td>
                         <button className="btn btn-danger"
                                 onClick={() => handleDelete(client.id)}

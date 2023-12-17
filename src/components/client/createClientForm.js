@@ -6,7 +6,7 @@ import '../../styles/createClientForm.css'
 
 const CreateClientForm = ({fetchClients}) => {
     const [formData, setFormData] = useState({
-        gender: "", age: "", region: "",
+        username: "", gender: "", age: "",
     });
 
     const handleChange = (e) => {
@@ -30,7 +30,7 @@ const CreateClientForm = ({fetchClients}) => {
         }
 
         setFormData({
-            gender: "", age: "", region: "",
+            username: "", gender: "", age: "",
         });
 
         fetchClients();
@@ -39,6 +39,17 @@ const CreateClientForm = ({fetchClients}) => {
     return (<div>
         <h4>Новый клиент</h4>
         <form onSubmit={handleSubmit}>
+            <div className="mb-2">
+                <label>Ник:</label>
+                <input
+                    type="text"
+                    autoComplete="off"
+                    className="form-control form-control-sm"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                />
+            </div>
             <div className="mb-2">
                 <label>Пол:</label>
                 <input
@@ -58,17 +69,6 @@ const CreateClientForm = ({fetchClients}) => {
                     className="form-control form-control-sm"
                     name="age"
                     value={formData.age}
-                    onChange={handleChange}
-                />
-            </div>
-            <div className="mb-2">
-                <label>Регион:</label>
-                <input
-                    type="text"
-                    autoComplete="off"
-                    className="form-control form-control-sm"
-                    name="region"
-                    value={formData.region}
                     onChange={handleChange}
                 />
             </div>

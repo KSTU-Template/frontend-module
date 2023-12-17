@@ -10,6 +10,7 @@ const Sidebar = () => {
                 <Link to="/dashboard/">Обо мне</Link>
                 <Link to="/dashboard/client">Мои клиенты</Link>
                 <Link to="/dashboard/chat">Генерация предложений</Link>
+                <Link to="/dashboard/chat/history">История генераций</Link>
             </div>
         </div>
     );
