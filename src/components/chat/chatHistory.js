@@ -1,7 +1,7 @@
 import React, {useState} from "react";
-import {Button, Form, ListGroup, Pagination} from "react-bootstrap";
+import {Button, Form, ListGroup, Pagination, Stack} from "react-bootstrap";
 
-const ChatHistory = ({infChannels, chats}) => {
+const ChatHistory = ({infChannels, products, chats}) => {
     const [messages, setMessages] = useState([]);
     const [pageMessages, setPageMessages] = useState([]);
     const [active, setActive] = useState(1);
@@ -26,7 +26,7 @@ const ChatHistory = ({infChannels, chats}) => {
             if (chat.client_id === clientId) {
                 const question = {
                     sender: "user",
-                    text: "Название продукта: "+chat.product_name+", Канал коммуникации: "+infChannels[chat.channel_id-1].name
+                    text: "Название продукта: "+products[chat.product_id-1].title+", Канал коммуникации: "+infChannels[chat.channel_id-1].name
                 };
                 const answer = {
                     sender: "bot",
@@ -68,6 +68,7 @@ const ChatHistory = ({infChannels, chats}) => {
         <div className="chat-container">
             <Form onSubmit={handleSubmit} className="message-input">
                 <Form.Group controlId="clientId">
+                    <Form.Label>ID Клиента</Form.Label>
                     <Form.Control
                         type="number"
                         placeholder="Введите идентификатор клиента"
@@ -80,22 +81,27 @@ const ChatHistory = ({infChannels, chats}) => {
                 </Button>
             </Form>
 
-            <ListGroup className="message-list">
-                {pageMessages.map((message, index) => (
-                    <ListGroup.Item key={index} className={`message ${message.sender}`}>
-                        {message.text}
-                    </ListGroup.Item>
-                ))}
-            </ListGroup>
-
-            <Pagination>
-                <Pagination.First onClick={() => setActivePage(1)}/>
-                <Pagination.Prev disabled={active === 1} onClick={() => setActivePage(active - 1)}/>
-                {getItems()}
-                <Pagination.Next disabled={active === Math.floor((messages.length - 1) / 10 + 1)}
-                                 onClick={() => setActivePage(active + 1)}/>
-                <Pagination.Last onClick={() => setActivePage(Math.floor((messages.length - 1) / 10 + 1))}/>
-            </Pagination>
+            <Stack gap={3}>
+                <ListGroup className="message-list">
+                    {pageMessages.map((message, index) => (
+                        <ListGroup.Item key={index} className={`message ${message.sender}`}>
+                            {message.text}
+                        </ListGroup.Item>
+                    ))}
+                </ListGroup>
+                {
+                    messages.length !== 0 ?
+                        <Pagination>
+                            <Pagination.First onClick={() => setActivePage(1)}/>
+                            <Pagination.Prev disabled={active === 1} onClick={() => setActivePage(active - 1)}/>
+                            {getItems()}
+                            <Pagination.Next disabled={active === Math.floor((messages.length - 1) / 10 + 1)}
+                                             onClick={() => setActivePage(active + 1)}/>
+                            <Pagination.Last onClick={() => setActivePage(Math.floor((messages.length - 1) / 10 + 1))}/>
+                        </Pagination>
+                        : <></>
+                }
+            </Stack>
         </div>
     );
 };

@@ -1,15 +1,14 @@
 import React, {useState} from "react";
-import {Button, Form, ListGroup, Pagination} from "react-bootstrap";
+import {Button, Form, ListGroup, Pagination, Stack} from "react-bootstrap";
 import "../../styles/userChat.css";
 import {apiUrl} from "../../config";
 
-const ChatForm = ({infChannels}) => {
+const ChatForm = ({infChannels, products}) => {
     const [messages, setMessages] = useState([]);
-    const [items, setItems] = useState([]);
     const [pageMessages, setPageMessages] = useState([]);
     const [active, setActive] = useState(1);
     const [formData, setFormData] = useState({
-        client_id: 0, product_name: "", channel_id: 1,
+        client_id: 0, product_id: 1, channel_id: 1,
     });
 
     const getItems = () => {
@@ -38,11 +37,10 @@ const ChatForm = ({infChannels}) => {
     const addChat = (chat) => {
         const messagesTemp = messages;
         const pageMessagesTemp = [];
-        const itemsTemp = []
 
         const question = {
             sender: "user",
-            text: "Название продукта: "+formData.product_name+", Канал коммуникации: "+infChannels[formData.channel_id-1].name
+            text: "Название продукта: "+products[formData.product_id-1].title+", Канал коммуникации: "+infChannels[formData.channel_id-1].name
         };
         const answer = {
             sender: "bot",
@@ -54,14 +52,13 @@ const ChatForm = ({infChannels}) => {
             pageMessagesTemp.push(val);
         })
 
-        setItems(itemsTemp);
         setMessages(messagesTemp);
         setPageMessages(pageMessagesTemp);
     }
 
     const handleChange = (e) => {
         setFormData({
-            ...formData, [e.target.name]: e.target.value,
+            ...formData, [e.target.name]: e.target.valueAsNumber,
         });
     };
 
@@ -82,7 +79,7 @@ const ChatForm = ({infChannels}) => {
         const data = await response.json();
         addChat(data);
         setFormData({
-            client_id: 0, product_name: "", channel_id: 1,
+            client_id: 0, product_id: 1, channel_id: 1,
         });
     };
 
@@ -90,6 +87,7 @@ const ChatForm = ({infChannels}) => {
         <div className="chat-container">
             <Form onSubmit={handleSubmit} className="message-input">
                 <Form.Group controlId="clientId">
+                    <Form.Label>ID Клиента</Form.Label>
                     <Form.Control
                         type="number"
                         placeholder="Введите идентификатор клиента"
@@ -99,15 +97,20 @@ const ChatForm = ({infChannels}) => {
                     />
                 </Form.Group>
                 <Form.Group controlId="productName">
-                    <Form.Control
-                        type="text"
-                        placeholder="Введите название продукта"
-                        value={formData.product_name}
-                        name="product_name"
+                    <Form.Label>Продукт</Form.Label>
+                    <Form.Select
+                        aria-label="Продукт"
+                        name="product_id"
+                        value={formData.product_id}
                         onChange={handleChange}
-                    />
+                    >
+                        {products.map(product => {
+                            return <option value={product.id}>{product.title}</option>
+                        })}
+                    </Form.Select>
                 </Form.Group>
                 <Form.Group controlId="productName">
+                    <Form.Label>Канал коммуникации</Form.Label>
                     <Form.Select
                         aria-label="Канал коммуникации"
                         name="channel_id"
@@ -124,20 +127,27 @@ const ChatForm = ({infChannels}) => {
                 </Button>
             </Form>
 
-            <ListGroup className="message-list">
-                {pageMessages.map((message, index) => (
-                    <ListGroup.Item key={index} className={`message ${message.sender}`}>
-                        {message.text}
-                    </ListGroup.Item>
-                ))}
-            </ListGroup>
-            <Pagination>
-                <Pagination.First/>
-                <Pagination.Prev />
-                {getItems()}
-                <Pagination.Next />
-                <Pagination.Last/>
-            </Pagination>
+            <Stack gap={3}>
+                <ListGroup className="message-list">
+                    {pageMessages.map((message, index) => (
+                        <ListGroup.Item key={index} className={`message ${message.sender}`}>
+                            {message.text}
+                        </ListGroup.Item>
+                    ))}
+                </ListGroup>
+                {
+                    messages.length !== 0 ?
+                    <Pagination>
+                        <Pagination.First onClick={() => setActivePage(1)}/>
+                        <Pagination.Prev disabled={active === 1} onClick={() => setActivePage(active - 1)}/>
+                        {getItems()}
+                        <Pagination.Next disabled={active === Math.floor((messages.length - 1) / 10 + 1)}
+                                         onClick={() => setActivePage(active + 1)}/>
+                        <Pagination.Last onClick={() => setActivePage(Math.floor((messages.length - 1) / 10 + 1))}/>
+                    </Pagination>
+                        : <></>
+                }
+            </Stack>
         </div>
     );
 };

@@ -16,6 +16,7 @@ export default function Dashboard() {
     const [clients, setClients] = useState([]);
     const [chats, setChats] = useState([]);
     const [infChannels, setInfChannels] = useState([]);
+    const [products, setProducts] = useState([]);
 
     async function getInfoAboutMe() {
         const response = await fetch(`${apiUrl}/api/auth/`, {
@@ -72,7 +73,7 @@ export default function Dashboard() {
         });
 
         if (!response.ok) {
-            alert("Что-то пошло не так при загрузке чатов");
+            alert("Что-то пошло не так при загрузке каналов");
             return;
         }
 
@@ -80,11 +81,26 @@ export default function Dashboard() {
         setInfChannels(data);
     }
 
+    async function fetchProducts() {
+        const response = await fetch(`${apiUrl}/api/product/`, {
+            method: "GET", headers: {Authorization: `Bearer ${window.localStorage.getItem("token")}`,},
+        });
+
+        if (!response.ok) {
+            alert("Что-то пошло не так при загрузке продуктов");
+            return;
+        }
+
+        const data = await response.json();
+        setProducts(data);
+    }
+
     useEffect(() => {
         getInfoAboutMe();
         fetchClients();
         fetchChats();
         fetchInformationChannels();
+        fetchProducts();
     }, []);
 
     return (<div>
@@ -94,8 +110,8 @@ export default function Dashboard() {
                 <Routes>
                     <Route path="/client" element={<ClientForm clients={clients} fetchClients={fetchClients}/>}/>
                     <Route path="/" element={<UserInfo userData={userData}/>}/>
-                    <Route path="/chat" element={<ChatForm infChannels={infChannels}/>}/>
-                    <Route path="/chat/history" element={<ChatHistory infChannels={infChannels} chats={chats}/>}/>
+                    <Route path="/chat" element={<ChatForm infChannels={infChannels} products={products}/>}/>
+                    <Route path="/chat/history" element={<ChatHistory infChannels={infChannels} products={products} chats={chats}/>}/>
                 </Routes>
             </div>
         </div>
